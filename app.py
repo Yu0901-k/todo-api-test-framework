@@ -1,6 +1,8 @@
 import os
-
+import threading
 from flask import Flask, request, jsonify
+
+lock = threading.Lock()
 
 app = Flask(__name__)       #创建一个 Flask 应用实例
 app.json.ensure_ascii = False       #显示中文
@@ -43,11 +45,14 @@ def create_todo():
         return jsonify({"message": "title为空串"}), 400
     if len(request_body["title"].strip()) > 100:
         return jsonify({"message": "title超出长度限制"}), 400
+
+
         
     #业务逻辑
     global next_id      #要加global，否则会认为是新建的变量（作用域）
-    todo_id = next_id
-    next_id = next_id + 1
+    with lock:
+        todo_id = next_id
+        next_id = next_id + 1
     todo =  {"id":todo_id, "title":request_body["title"], "completed": False}
     todos.append(todo)      #添加创建的待办
     return jsonify(todo),201
