@@ -1,18 +1,18 @@
 # 待办事项 API 接口自动化测试框架
 
-[![test](https://github.com/xiuxiaoyin/xiu/actions/workflows/test.yml/badge.svg)](https://github.com/xiuxiaoyin/xiu/actions/workflows/test.yml)
+[![test](https://github.com/xiuxiaoyin/todo-api-test-framework/actions/workflows/test.yml/badge.svg)](https://github.com/xiuxiaoyin/todo-api-test-framework/actions/workflows/test.yml)
 
 ## 简介
 
 针对一个待办事项（Todo）后台 API 的接口自动化测试框架。
 
 被测服务用 Flask 实现，包含 5 个 RESTful 接口；测试侧基于 pytest 搭建，
-覆盖成功路径、参数校验、错误码、资源不存在等 15 条用例，支持 yaml 数据驱动、
-Allure 可视化报告和 GitHub Actions 持续集成。
+覆盖成功路径、参数校验、错误码、资源不存在等 15 条 API 用例，另有 3 条
+Playwright UI 用例，支持 yaml 数据驱动、Allure 可视化报告和 GitHub Actions 持续集成。
 
 ## 技术栈
 
-Python 3.14 · pytest · requests · PyYAML · Allure · GitHub Actions · Flask
+Python 3.14 · pytest · requests · PyYAML · Playwright · Allure · GitHub Actions · Flask
 
 ## 项目结构
 
@@ -23,9 +23,12 @@ Internship_program/
 │   ├─ config.py BASE_URL / PROJECT_ROOT
 │   ├─ utils.py load_cases
 │   └─ http_client.py 统一请求入口（超时 + 日志）
-├─ testcases/ ← 15 条用例，按业务分 4 个文件
+├─ testcases/ ← 15 条 API 用例，按业务分 4 个文件
 ├─ test_data/ ← yaml 数据驱动
-├─ conftest.py ← 共享 fixture
+├─ pages/ ← Page Object（页面元素与业务动作封装）
+├─ uitests/ ← 3 条 Playwright UI 用例
+├─ static/ ← 前端页面（UI 测试对象）
+├─ conftest.py ← 共享 fixture（temp_todo / create_todo）
 ├─ pytest.ini ← pytest 配置（含日志）
 ├─ app.py ← 被测系统
 ├─ test-table/设计.md ← 接口规格文档
@@ -53,15 +56,16 @@ allure serve ./allure-results
 
 ## 测试报告
 
-在线查看最新报告：https://xiuxiaoyin.github.io/xiu/
+在线查看最新报告：https://xiuxiaoyin.github.io/todo-api-test-framework/
 每次push自动更新
 ![测试报告截图](./docs/allure-report.png)
 
 ## 设计要点
 
 **为什么测试数据能自动清理？**
-用 `autouse=True` 的 fixture，在每条用例前后都清空环境。
-保证用例之间互不干扰——无论上一条成功还是失败，下一条都从干净状态开始。
+每条用例自己创建、自己清理：`temp_todo` 用 `yield` 做前置/后置，`create_todo`
+工厂 fixture 记录创建的 id 并在用例结束后统一删除。数据标题带唯一后缀，
+并发执行时用例之间也不会互相干扰。
 
 **为什么用例数据放在 yaml 而不是代码里？**
 参数校验用例的数据全部放在 `test_data/`，用例代码只负责发请求和断言。

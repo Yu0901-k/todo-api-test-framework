@@ -3,3 +3,4 @@ allure-results/
 __pycache__/
 .pytest_cache/
 allure-report/
+temp.py

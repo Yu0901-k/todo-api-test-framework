@@ -1,10 +1,7 @@
 #DELETE方法
 
-import requests 
-import pytest
 import allure
-from common.config import BASE_URL
-from common.http_client import delete
+from common.http_client import delete, get
 
 #删除待办
 @allure.epic("待办事项 API")
@@ -15,7 +12,7 @@ def test_delete_todo_success(temp_todo):
     assert r.status_code == 204
 
     # 关键：再查一次，确认真的没了
-    r2 = requests.get(f"{BASE_URL}/todos/{temp_todo['id']}")
+    r2 = get(f"/todos/{temp_todo['id']}")
     assert r2.status_code == 404
 
 #删除待办，id不存在->404

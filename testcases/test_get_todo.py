@@ -42,4 +42,4 @@ def test_get_single_todo(temp_todo):              # ← 名字对上就自动注
     r = get(f"/todos/{temp_todo['id']}")
     assert r.status_code == 200
     assert r.json()["id"] == temp_todo["id"]
-    assert r.json()["title"] == "临时数据"
+    assert r.json()["title"] == temp_todo["title"]
