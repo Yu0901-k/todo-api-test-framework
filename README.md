@@ -1,3 +1,14 @@
+# Todo API 接口自动化测试项目（个人实战）
+
+> **项目基于开源框架进行二次开发，以下为我个人的改造贡献：**
+> 1. **扩充异常场景**：在 `test_data/` 中独立新增了 5 组边界测试数据（布尔值、小数、纯空格等），覆盖原框架未涉及的输入场景。
+> 2. **动态断言优化**：将底层 Python 代码中写死的状态码断言，改为从 YAML 动态读取（支持 400 和 201）。
+> 3. **发现安全隐患**：在参数校验测试中发现系统未拦截 SQL 注入特殊字符（`' OR 1=1 --`），验证了后端的防注入缺陷。
+> 4. **工程化实践**：完善 `.gitignore` 排除测试生成物，保留 CI 配置，理解版本管理规范。
+
+---
+*(以下是原项目介绍)*
+
 # 待办事项 API 接口自动化测试框架
 
 [![test](https://github.com/xiuxiaoyin/todo-api-test-framework/actions/workflows/test.yml/badge.svg)](https://github.com/xiuxiaoyin/todo-api-test-framework/actions/workflows/test.yml)
